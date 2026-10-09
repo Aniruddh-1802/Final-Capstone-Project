@@ -39,3 +39,6 @@ Python root is src/. Packages: app (api), etl, utils, airflow/dags. Also db/, sc
 - For anything larger than one function, show a plan or file list first and wait for approval.
 - Inspect existing code before creating new abstractions. Do not duplicate logic.
 - State assumptions explicitly. After changes, tell me exactly how to verify them.
+
+## Deploying on a new machine
+If asked to set this project up on a new system, follow `DEPLOY_WITH_CLAUDE_CODE.md` step by step (prerequisites, dataset download with hash check, MySQL, .env, seeding, loading, API, front end, tests) and verify each step's expected result.
