@@ -1,0 +1,6 @@
+# Only needed to REBUILD the documents (diagrams, PDFs, deck). Not needed to run the system or the tests.
+matplotlib>=3.8
+markdown>=3.5
+python-pptx>=1.0
+pillow>=10.0
+pymupdf>=1.24

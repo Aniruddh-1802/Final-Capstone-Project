@@ -1,6 +1,6 @@
 # Role verification (UI versus direct API)
 
-Run by `frontend/e2e/run.mjs` on 2026-10-08 with headless Chrome against the real API and database. For every role and action the script recorded what the UI shows and what the API answers when the same call is made directly with that role's token (`fetch` with the Authorization header from the session). The UI only hides things; the API status is the real enforcement.
+Run by `frontend/e2e/run.mjs` on 2026-10-09 with headless Chrome against the real API and database. For every role and action the script recorded what the UI shows and what the API answers when the same call is made directly with that role's token (`fetch` with the Authorization header from the session). The UI only hides things; the API status is the real enforcement.
 
 | Role | Action | UI behaviour | Direct API status | Agree |
 |---|---|---|---|---|
@@ -62,12 +62,12 @@ API status meaning: 200/201/204 = allowed, 403 = forbidden by role (401 would me
 | every API call (except login) carries the Authorization header | PASS | 291 requests |
 | no token appears in any URL | PASS |  |
 | an invalid token is rejected and sends the user to login (401 handled centrally) | PASS |  |
-| KPI card "Encounters" equals the API value | PASS | 91,566 |
-| KPI card 30-day rate equals the API value (formatted) | PASS | 11.43% |
+| KPI card "Encounters" equals the API value | PASS | 101,766 |
+| KPI card 30-day rate equals the API value (formatted) | PASS | 11.39% |
 | simulated-dates banner is shown | PASS |  |
 | age groups are in clinical order, 0-10 first and 90-100 last | PASS | [0-10) [10-20) [20-30) [30-40) [40-50) [50-60) [60-70) [70-80) [80-90) [90-100) |
 | age-group table counts add up to the Encounters card | PASS |  |
-| after rapid filter changes the cards show the LAST selection | PASS | 17,014 vs API 17014 |
+| after rapid filter changes the cards show the LAST selection | PASS | 18,480 vs API 18480 |
 | invalid length of stay: message appears under the right field | PASS | Enter a whole number from 1 to 14. |
 | invalid form is not sent to the API | PASS |  |
 | server 422 (unknown patient) is mapped onto the Patient number field | PASS | patient 123 does not exist |
@@ -77,7 +77,7 @@ API status meaning: 200/201/204 = allowed, 403 = forbidden by role (401 would me
 | audit log shows exactly CREATE, UPDATE, DELETE for what was just done | PASS | CREATE, UPDATE, DELETE |
 | UPDATE audit row shows only the fields that changed | PASS | readmitted, readmitted_30d, any_readmission |
 | pipeline page shows status, counts and reject ratio | PASS |  |
-| Excel report downloads through the UI with authentication (blob, no token in URL) | PASS | readmission_summary_20261009_002149.xlsx |
+| Excel report downloads through the UI with authentication (blob, no token in URL) | PASS | readmission_summary_20261009_212054.xlsx |
 | an oversized encounter export shows the server's helpful 413 message | PASS |  |
 | analyst encounter table has no patient column and no create button | PASS | Encounter, Admitted (simulated), Age, Admission type, Days, Meds, Readmitted |
 | analyst has no patient-number filter | PASS |  |

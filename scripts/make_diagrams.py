@@ -1,4 +1,4 @@
-"""Render docs/erd.png (from docs/erd.mmd) and architecture/architecture_v0.png with matplotlib.
+﻿"""Render docs/erd.png (from docs/erd.mmd) and architecture/architecture_v0.png with matplotlib.
 
 Needs matplotlib (documentation tooling only, not in requirements.txt):  pip install matplotlib
 Run from the repository root:  python scripts/make_diagrams.py
@@ -221,7 +221,7 @@ def draw_architecture_final(out_dir: Path) -> None:
     arrow((17.2, 8.5), (17.8, 8.5), "SQL", ly=8.6, lx=17.5)
 
     # ---- row 2: operations, scheduling, the user interface ------------------------------------------------------------------------
-    box(0.2, 3.3, 6.4, 2.7, "Evidence and tests", ["314 backend tests (pytest) + 42 UI tests (Vitest)", "headless-browser run: 71 checks, UI vs API per role", "verify_kpis.py: SQL = API = pandas, 88 of 88",
+    box(0.2, 3.3, 6.4, 2.7, "Evidence and tests", ["315 backend tests (pytest) + 42 UI tests (Vitest)", "headless-browser run: 71 checks, UI vs API per role", "verify_kpis.py: SQL = API = pandas, 88 of 88",
                                                   "docs/: contract, performance notes, runbook, audit log"], "#eaeded", body_size=8.4)
     box(7.2, 3.3, 4.6, 2.7, "Airflow 3.1  (WSL2, own virtualenv)", ["healthcare_incremental_etl (hourly):", "scan > run_etl > check_quality > summary", "healthcare_weekly_report (Mondays 06:00)", "retries 2, catchup off, one run at a time", "fallback: scripts/scheduler.py"], "#fcf3cf", body_size=8.2)
     box(12.2, 3.3, 5.0, 2.7, "Files and logs", ["data/rejected: quarantined rows with a reason", "data/reports: generated CSV and Excel", "logs/: rotating, request id on every line", "audit_logs: who changed what, before and after"], "#eaeded", body_size=8.4)

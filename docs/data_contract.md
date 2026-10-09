@@ -1,4 +1,4 @@
-# Data contract
+﻿# Data contract
 
 Single source of truth for names, grain and rules. If code, a lab or another document disagrees with this file, this file wins.
 Source: UCI *Diabetes 130-US Hospitals for Years 1999-2008* (`diabetic_data.csv`, `IDs_mapping.csv`). Educational use only.
@@ -87,7 +87,7 @@ All create, update, delete and encounter-level export actions are audited.
 | Monthly / yearly rate and 3-month moving average | same rate per admission month/year (SIMULATED dates); moving average = mean of the current and two previous monthly rates | eligible encounters in the period |
 | Frequent patients | patients with 3 or more active encounters (counts only, no identifiers) | - |
 
-Verified against pandas on the raw CSV by scripts/verify_kpis.py (59 of 59 checks passed on the loaded data). On the loaded data the 30-day rate is 0.114258 over eligible encounters; dividing by all encounters would give 0.111548, which understates it by 0.00271.
+Verified against pandas on the raw CSV by scripts/verify_kpis.py (88 of 88 checks passed on the fully loaded data, which also compare the API). On the full data the 30-day rate is 0.113888 over eligible encounters (11,314 / 99,343); dividing by all encounters would give 0.111177, which understates it by 0.00271.
 
 ## 8b. Data-quality rules (implemented in `src/etl/quality.py`; thresholds below match the code)
 File policy: if the rejected share of a file exceeds `MAX_REJECT_RATIO` (default 0.20) the whole file is FAILED and nothing loads. Otherwise good rows load and bad rows go to `data/rejected/<batch>_rejected.csv` (original columns + `rule_name` + `reason`) and to `dq_issues` (at most 500 example rows per rule; true counts are in the run summary). A row failing several rules is reported once per rule and removed once.

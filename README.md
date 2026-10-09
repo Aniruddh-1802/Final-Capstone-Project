@@ -121,12 +121,16 @@ Creating and updating records (`POST /encounters`, `PUT /encounters/{id}`) with 
 
 ## Tests
 ```
-pytest                          # backend: needs the healthcare_test database (step 4); takes about 10 minutes
-pytest --cov=src                # with coverage
+python scripts/make_faulty_batch.py    # once (step 11): one test reads its manifest, otherwise that test is skipped
+pytest                          # backend: needs the healthcare_test database (step 4); takes about 11 minutes
+pytest --cov=src                # with coverage (94%)
 cd frontend && npm test         # 42 unit and component tests
 node frontend/e2e/run.mjs       # real-browser run (needs Chrome, the API and the dev server running)
 ```
 The test fixture refuses to run against any database whose name does not end in `_test`, so tests can never touch loaded data. Results, coverage and known gaps: `docs/test_report.md`.
+
+## Rebuilding the Documents (optional)
+The diagrams, PDFs and the slide deck are committed, so nothing here is needed to run the system. To regenerate them: `pip install -r requirements-docs.txt`, then `python scripts/make_diagrams.py` (ERD and architecture), `python scripts/make_api_docs.py` (API reference from real calls; needs the API's database loaded and logs in with temporary accounts it creates and deactivates), `python scripts/build_pdfs.py` (Markdown to PDF; needs Chrome or Edge) and `python scripts/make_deck.py` (presentation).
 
 ## Project Structure
 ```

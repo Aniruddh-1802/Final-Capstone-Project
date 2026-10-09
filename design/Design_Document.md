@@ -1,4 +1,4 @@
-# Design Document: Healthcare Patient Management System
+﻿# Design Document: Healthcare Patient Management System
 
 Educational capstone on the UCI *Diabetes 130-US Hospitals (1999-2008)* extract. Educational use only.
 Source of truth for every statement below: the repository (`docs/decision_log.md`, `docs/data_contract.md`, `docs/performance_notes.md`, the code and its tests). Numbers were measured on the final system.
@@ -90,7 +90,7 @@ Authentication: `POST /auth/login` returns a 60-minute HS256 token containing on
 ## 7. Security, roles and privacy
 - Roles are enforced on the server; hiding buttons in the interface is only convenience. A real-browser run compares what the interface shows with the API's answer for the same call, per role (`docs/role_verification.md`: all agree).
 - Data minimisation: race and gender exist only on `/patients` (403 for analysts); analyst encounter responses omit `patient_nbr` (the keys are absent, not null) and analysts cannot filter by `patient_nbr`, which would re-identify rows. Exports use an explicit column allow-list.
-- Audit: every create, update, delete and encounter-level export writes an `audit_logs` row with before and after values **in the same transaction** as the change. Tests force a failing audit write and a failing commit: neither the data nor an audit row remains.
+- Audit: every create, update, delete and encounter-level export writes an `audit_logs` row with before and after values **in the same transaction** as the change. Patient rows never copy race or gender values: they record that demographics are set and which field changed (found and fixed in the final test-hardening lab, pinned by a test). Tests force a failing audit write and a failing commit: neither the data nor an audit row remains.
 - Passwords are stored as bcrypt hashes; tokens, passwords and sensitive demographics never appear in logs or error responses; small groups (fewer than 11 encounters) are flagged `small_n`.
 - Database account `hc_app` can reach only the two project schemas.
 
@@ -108,7 +108,7 @@ Measured on a scratch copy with all 101,766 encounters plus 300,000 synthetic au
 Two findings matter beyond the indexes. A fifth, `audit_logs (username, created_at)`, looked right on paper but did not help, so it was **rejected on evidence**. And the largest single gain was not an index: the view joined `patients` only to hide deleted patients, which made the optimizer scan patients first. Rewriting that check as `NOT EXISTS` fixed the plan (ICD search 765 -> 68 ms before any index). Loading all batches costs 22.2 s without and 23.8 s with the indexes (+7%). Two analytics queries (readmission by age group and top drugs) still take 0.6-0.8 s because they must read every encounter; a pre-aggregated summary table was **rejected for now** (staleness and an extra step to save about half a second) and is revisited at about ten times the data.
 
 ## 9. Testing strategy
-- **Backend (pytest, `healthcare_test` only; the fixture refuses any other database):** transform and each DQ rule on a hand-built fixture; load, idempotency, forced-failure rollback and reconciliation against the real MySQL schema; every endpoint with all three roles; the permission matrix against this document; soft-delete invisibility; stable paging; audit atomicity; KPI numbers against a hand-calculated 40-row fixture. 314 tests.
+- **Backend (pytest, `healthcare_test` only; the fixture refuses any other database):** transform and each DQ rule on a hand-built fixture; load, idempotency, forced-failure rollback and reconciliation against the real MySQL schema; every endpoint with all three roles; the permission matrix against this document; soft-delete invisibility; stable paging; audit atomicity; KPI numbers against a hand-calculated 40-row fixture. 315 tests, 94% line coverage.
 - **Cross-checks on real data:** `scripts/verify_kpis.py` recomputes every headline and grouped KPI in pandas from the raw CSV and compares SQL and API: 88 of 88 checks.
 - **Front end:** 42 Vitest and component tests (stale-response guard, role guards, form rules) and a headless-Chrome run of 71 checks that drives the real UI for each role against the API and regenerates the screenshots.
 - **What is mocked:** nothing in the database layer; loaders, analytics and RBAC are tested against the real schema, because a mocked database passes even when the SQL is wrong. The front-end unit tests mock the API client only.
