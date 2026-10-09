@@ -1,0 +1,17 @@
+﻿.env
+venv/
+.venv/
+__pycache__/
+node_modules/
+frontend/dist/
+data/raw/*
+data/incoming/*
+data/held_back/*
+data/rejected/*
+data/reports/*
+logs/*
+airflow_home/
+.pytest_cache/
+.coverage
+htmlcov/
+!.gitkeep

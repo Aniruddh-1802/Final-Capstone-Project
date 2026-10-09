@@ -1,0 +1,152 @@
+erDiagram
+    patients ||--o{ encounters : "has (patient_nbr)"
+    ref_admission_type ||--o{ encounters : "admission_type_id"
+    ref_admission_source ||--o{ encounters : "admission_source_id"
+    ref_discharge_disposition ||--o{ encounters : "discharge_disposition_id"
+    ref_medical_specialty |o--o{ encounters : "specialty_id (nullable)"
+    ref_payer |o--o{ encounters : "payer_id (nullable)"
+    encounters ||--|| encounter_outcomes : "1 outcome"
+    encounters ||--o{ encounter_diagnoses : "up to 3"
+    encounters ||--o{ encounter_medications : "prescribed drugs"
+    medications ||--o{ encounter_medications : "medication_id"
+    pipeline_runs ||--o{ dq_issues : "run_id"
+    app_users |o--o{ audit_logs : "user_id (nullable)"
+
+    patients {
+        BIGINT patient_nbr PK
+        VARCHAR race "NULL, sensitive"
+        VARCHAR gender "NULL, sensitive"
+        BOOL is_deleted
+        DATETIME deleted_at
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    encounters {
+        BIGINT encounter_id PK
+        BIGINT patient_nbr FK
+        DATE admission_date "SIMULATED"
+        DATE discharge_date "SIMULATED"
+        VARCHAR age_group
+        TINYINT age_order
+        INT admission_type_id FK
+        INT discharge_disposition_id FK
+        INT admission_source_id FK
+        INT specialty_id FK "NULL"
+        INT payer_id FK "NULL"
+        TINYINT time_in_hospital
+        SMALLINT num_lab_procedures
+        TINYINT num_procedures
+        SMALLINT num_medications
+        SMALLINT number_outpatient
+        SMALLINT number_emergency
+        SMALLINT number_inpatient
+        TINYINT number_diagnoses
+        ENUM max_glu_serum
+        ENUM a1c_result
+        BOOL med_changed
+        BOOL diabetes_med
+        VARCHAR source_batch_id
+        BOOL is_deleted
+        DATETIME deleted_at
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    encounter_outcomes {
+        BIGINT encounter_id PK, FK
+        ENUM readmitted "NO, >30, <30"
+        BOOL readmitted_30d
+        BOOL any_readmission
+        BOOL is_readmission_eligible
+    }
+    encounter_diagnoses {
+        BIGINT encounter_id PK, FK
+        TINYINT position PK "1-3"
+        VARCHAR icd9_code
+    }
+    medications {
+        INT medication_id PK
+        VARCHAR drug_name UK
+    }
+    encounter_medications {
+        BIGINT encounter_id PK, FK
+        INT medication_id PK, FK
+        ENUM dosage_status "Steady, Up, Down"
+    }
+    ref_admission_type {
+        INT id PK
+        VARCHAR description
+    }
+    ref_admission_source {
+        INT id PK
+        VARCHAR description
+    }
+    ref_discharge_disposition {
+        INT id PK
+        VARCHAR description
+        BOOL is_expired_or_hospice
+    }
+    ref_medical_specialty {
+        INT specialty_id PK
+        VARCHAR name UK
+    }
+    ref_payer {
+        INT payer_id PK
+        VARCHAR payer_code UK
+    }
+    app_users {
+        INT user_id PK
+        VARCHAR username UK
+        VARCHAR password_hash
+        ENUM role "administrator, clinical_ops, analyst"
+        BOOL is_active
+        DATETIME last_login_at
+        DATETIME created_at
+    }
+    audit_logs {
+        BIGINT id PK
+        DATETIME created_at
+        INT user_id FK "NULL"
+        VARCHAR username
+        ENUM role
+        ENUM action "CREATE, UPDATE, DELETE, EXPORT"
+        VARCHAR entity_type
+        VARCHAR entity_id
+        JSON before_json
+        JSON after_json
+        VARCHAR request_id
+        VARCHAR ip_address
+    }
+    pipeline_runs {
+        INT run_id PK
+        VARCHAR source_file
+        CHAR file_hash
+        ENUM status
+        DATETIME started_at
+        DATETIME finished_at
+        INT rows_read
+        INT rows_loaded
+        INT rows_rejected
+        INT rows_skipped_existing
+        JSON dq_summary_json
+        TEXT error_message
+        VARCHAR triggered_by
+    }
+    dq_issues {
+        BIGINT issue_id PK
+        INT run_id FK
+        BIGINT encounter_id "no FK: rejected rows are not in encounters"
+        VARCHAR rule_name
+        ENUM severity
+        VARCHAR column_name
+        VARCHAR bad_value
+        ENUM action
+    }
+    report_runs {
+        INT report_id PK
+        VARCHAR report_type
+        VARCHAR file_path
+        INT row_count
+        JSON filters_json
+        DATETIME generated_at
+        VARCHAR triggered_by
+    }
